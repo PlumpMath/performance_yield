@@ -15,8 +15,15 @@ concerned.
 import timeit
 import random
 
+class Data:
+    def __init__(self):
+        self.param1 = "stuff"
+        self.param2 = 57.32
 
-def core_function(x, y):
+data = Data()
+
+
+def test_function1(x, y):
     """This represents the core of your program.
 
     This is the code that needs to be run thousands of times.
@@ -24,15 +31,32 @@ def core_function(x, y):
     z = x * y
 
 
+pi = 3.1415927
+def test_function2(x, y):
+    """This represents the core of your program.
+
+    This is the code that needs to be run thousands of times.
+    """
+    z = x * y * pi
+
+
+def test_function3(x, y):
+    """This represents the core of your program.
+
+    This is the code that needs to be run thousands of times.
+    """
+    z = x * y * pi + len(data.param1) * data.param2
+
+
 def frequently_called_function(p1, p2):
     """This represents the core of your program.
 
     This stands for the function or functions that you call thousands of times.
     """
-    core_function(p1, p2)
+    z = p1 * p2 * pi + len(data.param1) * data.param2
 
 
-def frequently_called_coroutine():
+def frequently_called_coroutine(pi):
     """This represents the core of your program.
 
     This stands for the function or functions that you call thousands of times.
@@ -40,21 +64,23 @@ def frequently_called_coroutine():
     yield.
     """
     # do some initialization
-    pass
+    pi_local = pi
+    length = len(data.param1)
+    offset = length * data.param2
 
     while True:
         p1, p2 = (yield)
         # run your stuff
-        core_function(p1, p2)
+        z = p1 * p2 * pi_local + offset
 
     # do some cleanup on GeneratorExit
     pass
 
 
 class MyClass:
-    def __init__(self):
+    def __init__(self, pi):
         # do some initialization
-        pass
+        self.pi = pi
 
     def frequently_called_method(self, p1, p2):
         """This represents the core of your program.
@@ -63,7 +89,7 @@ class MyClass:
         In this case it is a method within some class.  Otherwise it is identical
         to frequently_called_function.
         """
-        core_function(p1, p2)
+        z = p1 * p2 * self.pi + len(data.param1) * data.param2
 
 
 def function_runner(n=1000):
@@ -74,7 +100,7 @@ def function_runner(n=1000):
 
 
 def coroutine_runner(n=1000):
-    cr = frequently_called_coroutine()
+    cr = frequently_called_coroutine(pi)
     next(cr)
     for i in range(n):
         x = random.random()
@@ -83,7 +109,7 @@ def coroutine_runner(n=1000):
 
 
 def method_runner(n=1000):
-    obj = MyClass()
+    obj = MyClass(pi)
     for i in range(n):
         x = random.random()
         y = random.randint(0,100)
@@ -96,7 +122,7 @@ def evaluate(measurements, msg=''):
 
 
 if __name__ == '__main__':
-    ncalls = 100000000
+    ncalls = 1000000
     rounds = 5
 
     t_function = timeit.Timer('__main__.function_runner({})'.format(ncalls),
